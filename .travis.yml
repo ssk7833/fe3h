@@ -1,0 +1,32 @@
+language: node_js
+node_js:
+- stable
+
+env:
+  global:
+    secure: DwV1TYo2Ofi2rTp9fit9Ai3/J/kmx4R3uNOBDwijz6PM/zaKbqXf3KVfajuKrG/eh96Ng0DaZqFHv82ybNr1alhI9ZM8xoqRkGdtqd3boDXXDW5x1+8ompFiyg/nuWE63wO3fuf1ZVtrJiSmkh8zFN3IZfZZakO0JJG3ig44lkCK8/Ds6j5XAyqMioTgLQyPqxaU3mX1IffFwB+JRWEvYlVf0FuQ/vMIURivr+rtYvPSqUc1qqnZqQ6cS7ML2c853LarkY88wsS1vOjZzwMBw/NVV9W34k7Eu6X0R24fpHRz95q9ABmHXu3sf+Yhv2ouRtr1Lyb0OKRKIpTSAL+yKMghKHIUB1ADWBKrfWvvYoXdhbze+GNCZFWuOI59TdFySUi35AT6fqwZj7hwrLxZAp9/MjiUFo8Fca7sRRPCA4W6rY1BAUHRwG9v6mV+7qIk9HVVkC6R5tg9q+00wcrpsR1pAriJMLIzFQ1FClGCHTmomzC7mbatRFD+mhPKiKN094J/VXrCzNDsW8XlyJLaJruleQJ+l3HZOsZRBMaTHFVPy0GyUjZzT82vp5LLash/fdmkycXXRbRN6vy567b4kYIW4c/NaFSdL4VB6sKwPBape/s28gZC4tM0eL5F7Lryz75HdYR8b5pDbMxfc5Dc74lGI5os102vHAw6tFLDcJY=
+
+before_install:
+  - export TZ=Asia/Taipei
+
+install:
+  - npm install
+
+script:
+  # Set Git config
+  - git config --global user.name "$GIT_NAME"
+  - git config --global user.email "$GIT_EMAIL"
+  - git config --global push.default simple
+  - git clone --depth 1 --branch gh-pages https://$GH_TOKEN@github.com/ssk7833/fe3h public
+  - rm public/* -rf
+  - npm run build
+  - mv dist/* public
+  - cd public
+  - git add -A .
+  - MESSAGE=`date +\ %Y-%m-%d\ %H:%M:%S`
+  - if [ "$TRAVIS_BRANCH" = "master" ]; 
+    then git commit -m "Site updated:$MESSAGE";
+    fi
+  - if [ "$TRAVIS_BRANCH" = "master" ]; 
+    then git push --quiet;
+    fi
